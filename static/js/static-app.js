@@ -143,38 +143,31 @@ const resultsContent = document.getElementById('resultsContent');
 const queryPill      = document.getElementById('queryPill');
 const loadingQueryEl = document.getElementById('loadingQuery');
 const apiKeyInput    = document.getElementById('apiKeyInput');
-const keyStatus      = document.getElementById('keyStatus');
 const settingsPanel  = document.getElementById('settingsPanel');
 
 // ── API Key management ──
 function loadApiKey() {
   const key = localStorage.getItem('guitarx_api_key') || '';
   if (apiKeyInput) apiKeyInput.value = key;
-  updateKeyStatus(key);
+  updateKeyUI(key);
   return key;
 }
 
 function saveApiKey() {
-  const key = apiKeyInput.value.trim();
+  const key = (apiKeyInput.value || '').trim();
   if (key) {
     localStorage.setItem('guitarx_api_key', key);
-    updateKeyStatus(key);
+    updateKeyUI(key);
     closeSettings();
   }
 }
 
-function updateKeyStatus(key) {
-  if (!keyStatus) return;
-  if (key && key.startsWith('sk-ant-')) {
-    keyStatus.textContent = 'API key set ✓';
-    keyStatus.className = 'key-status key-ok';
-  } else if (key) {
-    keyStatus.textContent = 'Key set (unverified)';
-    keyStatus.className = 'key-status key-warn';
-  } else {
-    keyStatus.textContent = 'No API key';
-    keyStatus.className = 'key-status key-missing';
-  }
+function updateKeyUI(key) {
+  const dot    = document.getElementById('headerKeyDot');
+  const banner = document.getElementById('apiBanner');
+  const hasKey = !!key;
+  if (dot)    dot.classList.toggle('ok', hasKey);
+  if (banner) banner.classList.toggle('hidden', hasKey);
 }
 
 function toggleSettings() {

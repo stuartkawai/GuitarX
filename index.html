@@ -22,96 +22,86 @@
   <link rel="stylesheet" href="static/css/style.css">
 
   <style>
-    /* ── Settings panel ── */
-    .settings-btn {
-      display: inline-flex;
+    /* ── API Key Banner ── */
+    .api-banner {
+      background: linear-gradient(135deg, rgba(245,158,11,0.12), rgba(245,158,11,0.06));
+      border: 1.5px solid rgba(245,158,11,0.4);
+      border-radius: var(--radius);
+      padding: 20px 24px;
+      margin-bottom: 20px;
+      display: flex;
       align-items: center;
-      gap: 6px;
-      padding: 6px 13px;
-      background: var(--bg-card);
-      border: 1px solid var(--border);
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+    .api-banner-icon { font-size: 28px; flex-shrink: 0; }
+    .api-banner-text { flex: 1; min-width: 200px; }
+    .api-banner-text strong { color: var(--amber); font-size: 15px; display: block; margin-bottom: 4px; }
+    .api-banner-text span { color: var(--text-muted); font-size: 13px; line-height: 1.5; }
+    .api-banner-btn {
+      padding: 10px 20px;
+      background: linear-gradient(135deg, var(--amber), var(--amber-dim));
+      border: none;
       border-radius: var(--radius-sm);
-      color: var(--text-muted);
+      color: #0c0e14;
       font-family: var(--font);
-      font-size: 13px;
-      font-weight: 500;
+      font-size: 14px;
+      font-weight: 700;
       cursor: pointer;
-      transition: all var(--transition);
+      white-space: nowrap;
+      flex-shrink: 0;
     }
-    .settings-btn:hover { border-color: var(--border-light); color: var(--text); }
+    .api-banner-btn:hover { opacity: 0.88; }
 
-    .key-status {
-      font-size: 12px;
-      font-weight: 600;
-      padding: 3px 10px;
-      border-radius: 100px;
-      border: 1px solid;
-    }
-    .key-ok      { color: #34d399; border-color: rgba(52,211,153,0.3); background: rgba(52,211,153,0.08); }
-    .key-warn    { color: #fbbf24; border-color: rgba(251,191,36,0.3);  background: rgba(251,191,36,0.08); }
-    .key-missing { color: #f87171; border-color: rgba(248,113,113,0.3); background: rgba(248,113,113,0.08); }
-
+    /* ── Settings modal ── */
     .settings-overlay {
       position: fixed;
       inset: 0;
-      background: rgba(0,0,0,0.6);
-      backdrop-filter: blur(4px);
+      background: rgba(0,0,0,0.7);
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
       z-index: 200;
       display: flex;
       align-items: center;
       justify-content: center;
       padding: 24px;
     }
-
     .settings-card {
       background: var(--bg-card);
       border: 1px solid var(--border-light);
       border-radius: var(--radius);
       padding: 28px;
       width: 100%;
-      max-width: 480px;
-      box-shadow: 0 24px 64px rgba(0,0,0,0.6);
+      max-width: 460px;
+      box-shadow: 0 32px 80px rgba(0,0,0,0.7);
     }
-
     .settings-card h2 {
-      font-size: 18px;
+      font-size: 20px;
       font-weight: 800;
       color: var(--text);
       margin-bottom: 6px;
       letter-spacing: -0.4px;
     }
-
-    .settings-card .settings-desc {
+    .settings-desc {
       font-size: 13px;
       color: var(--text-muted);
-      margin-bottom: 20px;
-      line-height: 1.5;
+      margin-bottom: 22px;
+      line-height: 1.6;
     }
-
-    .settings-card .settings-desc a {
-      color: var(--amber);
-      text-decoration: none;
-    }
-
+    .settings-desc a { color: var(--amber); text-decoration: none; }
     .settings-label {
       display: block;
-      font-size: 12px;
-      font-weight: 600;
+      font-size: 11px;
+      font-weight: 700;
       color: var(--text-muted);
       text-transform: uppercase;
-      letter-spacing: 0.5px;
+      letter-spacing: 0.8px;
       margin-bottom: 8px;
     }
-
-    .settings-input-row {
-      display: flex;
-      gap: 8px;
-      margin-bottom: 10px;
-    }
-
+    .settings-input-row { display: flex; gap: 8px; margin-bottom: 12px; }
     .settings-key-input {
       flex: 1;
-      padding: 11px 14px;
+      padding: 12px 14px;
       background: var(--bg-input);
       border: 1.5px solid var(--border);
       border-radius: var(--radius-sm);
@@ -126,42 +116,31 @@
       border-color: var(--amber);
       box-shadow: 0 0 0 3px var(--amber-glow);
     }
-
     .save-key-btn {
-      padding: 11px 18px;
+      padding: 12px 20px;
       background: linear-gradient(135deg, var(--amber), var(--amber-dim));
       border: none;
       border-radius: var(--radius-sm);
       color: #0c0e14;
       font-family: var(--font);
-      font-size: 13px;
+      font-size: 14px;
       font-weight: 700;
       cursor: pointer;
-      white-space: nowrap;
-      transition: opacity var(--transition);
       flex-shrink: 0;
     }
     .save-key-btn:hover { opacity: 0.88; }
-
     .settings-note {
       font-size: 12px;
       color: var(--text-dim);
-      line-height: 1.5;
+      line-height: 1.55;
       padding: 10px 12px;
       background: rgba(255,255,255,0.03);
       border-radius: var(--radius-xs);
       border: 1px solid var(--border);
-      margin-top: 4px;
     }
-
-    .settings-close-row {
-      display: flex;
-      justify-content: flex-end;
-      margin-top: 16px;
-    }
-
+    .settings-close-row { display: flex; justify-content: flex-end; margin-top: 16px; }
     .settings-close-btn {
-      padding: 8px 16px;
+      padding: 8px 18px;
       background: transparent;
       border: 1px solid var(--border);
       border-radius: var(--radius-sm);
@@ -172,6 +151,31 @@
       transition: all var(--transition);
     }
     .settings-close-btn:hover { border-color: var(--border-light); color: var(--text); }
+
+    /* ── Header key indicator (compact) ── */
+    .header-key-dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: #f87171;
+      flex-shrink: 0;
+    }
+    .header-key-dot.ok { background: #34d399; }
+    .header-settings-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      color: var(--text-muted);
+      font-family: var(--font);
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all var(--transition);
+    }
+    .header-settings-btn:hover { border-color: var(--amber); color: var(--amber); }
   </style>
 </head>
 <body>
@@ -187,27 +191,22 @@
           <span class="logo-sub">Guitar Bible</span>
         </div>
       </div>
-      <div style="display:flex;align-items:center;gap:10px;">
-        <span id="keyStatus" class="key-status key-missing">No API key</span>
-        <button class="settings-btn" onclick="toggleSettings()">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
-          </svg>
-          API Key
-        </button>
-      </div>
+      <button class="header-settings-btn" onclick="toggleSettings()">
+        <span class="header-key-dot" id="headerKeyDot"></span>
+        API Key
+      </button>
     </div>
   </header>
 
-  <!-- ── Settings overlay ── -->
+  <!-- ── Settings modal ── -->
   <div id="settingsPanel" class="settings-overlay hidden" onclick="handleOverlayClick(event)">
     <div class="settings-card" id="settingsCard">
-      <h2>Anthropic API Key</h2>
+      <h2>🔑 Enter Your API Key</h2>
       <p class="settings-desc">
-        GuitarX uses the Claude API directly from your browser.<br>
-        Get your key at <a href="https://console.anthropic.com" target="_blank" rel="noopener">console.anthropic.com</a> — it's stored only in your browser's localStorage.
+        GuitarX runs entirely in your browser and calls Claude directly.<br>
+        Get a free key at <a href="https://console.anthropic.com" target="_blank" rel="noopener noreferrer">console.anthropic.com</a> — it's saved only to <em>your</em> browser.
       </p>
-      <label class="settings-label" for="apiKeyInput">Your API Key</label>
+      <label class="settings-label" for="apiKeyInput">Anthropic API Key</label>
       <div class="settings-input-row">
         <input
           type="password"
@@ -220,7 +219,7 @@
         <button class="save-key-btn" onclick="saveApiKey()">Save</button>
       </div>
       <p class="settings-note">
-        🔒 Your key never leaves your browser — requests go directly from your device to api.anthropic.com.
+        🔒 Your key is stored in your browser's localStorage and sent directly to api.anthropic.com — never to any other server.
       </p>
       <div class="settings-close-row">
         <button class="settings-close-btn" onclick="closeSettings()">Close</button>
@@ -245,7 +244,7 @@
             type="text"
             id="queryInput"
             class="search-input"
-            placeholder="Am7 · Gmaj9 · F#dim7 · A Dorian · E Phrygian · G Mixolydian…"
+            placeholder="Am7 · Gmaj9 · F#dim7 · A Dorian · E Phrygian…"
             autocomplete="off"
             spellcheck="false"
           >
@@ -311,26 +310,37 @@
   <!-- ── Welcome ── -->
   <section id="welcomeSection" class="welcome">
     <div class="welcome-inner">
+
+      <!-- API key banner — shown until key is saved -->
+      <div id="apiBanner" class="api-banner">
+        <div class="api-banner-icon">🔑</div>
+        <div class="api-banner-text">
+          <strong>Add your Anthropic API key to get started</strong>
+          <span>GuitarX runs entirely in your browser. Your key is never shared — get one free at console.anthropic.com</span>
+        </div>
+        <button class="api-banner-btn" onclick="toggleSettings()">Enter API Key</button>
+      </div>
+
       <div class="features-grid">
         <div class="feature-card">
           <div class="feature-icon">🎸</div>
           <h3>Chord Diagrams</h3>
-          <p>3+ voicings per chord with ASCII diagrams, tab notation, and finger positions for every shape</p>
+          <p>3+ voicings per chord with ASCII diagrams, tab notation, and finger positions</p>
         </div>
         <div class="feature-card">
           <div class="feature-icon">🗺️</div>
           <h3>Fretboard Maps</h3>
-          <p>Full fretboard diagrams across 3 positions for any scale or mode — from open to upper neck</p>
+          <p>Full fretboard diagrams across 3 positions for any scale or mode</p>
         </div>
         <div class="feature-card">
           <div class="feature-icon">📐</div>
           <h3>Music Theory</h3>
-          <p>Intervals, formulas, diatonic chords, and progressions in Roman numerals and chord names</p>
+          <p>Intervals, formulas, diatonic chords, and progressions in Roman numerals</p>
         </div>
         <div class="feature-card">
           <div class="feature-icon">🎵</div>
           <h3>Real-World Context</h3>
-          <p>Genre progressions, artist examples, the characteristic sound — everything a player needs</p>
+          <p>Genre progressions, artist examples, and the characteristic sound of every mode</p>
         </div>
       </div>
     </div>

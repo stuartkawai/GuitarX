@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GuitarX — Guitar Bible</title>
+  <meta name="description" content="Expert guitar reference: chord diagrams, scales, modes, theory, and progressions — powered by AI.">
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <!-- Syntax highlighting -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/base16/material-darker.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+
+  <!-- Markdown rendering -->
+  <script src="https://cdn.jsdelivr.net/npm/marked@9.1.6/marked.min.js"></script>
+
+  <!-- App styles -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+<div class="app">
+
+  <!-- ── Header ── -->
+  <header class="header">
+    <div class="header-inner">
+      <div class="logo">
+        <div class="logo-mark">🎸</div>
+        <div class="logo-text">
+          <span class="logo-name">GuitarX</span>
+          <span class="logo-sub">Guitar Bible</span>
+        </div>
+      </div>
+      <div class="header-tags">
+        <span class="header-tag">Chords</span>
+        <span class="header-tag">Scales</span>
+        <span class="header-tag">Modes</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- ── Hero + Search ── -->
+  <section class="hero">
+    <div class="hero-inner">
+      <h1 class="hero-title">Your <span>Guitar Bible</span></h1>
+      <p class="hero-subtitle">Enter any chord, scale, or mode for instant expert analysis</p>
+
+      <div class="search-box">
+        <div class="search-row">
+          <div class="search-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+            </svg>
+          </div>
+          <input
+            type="text"
+            id="queryInput"
+            class="search-input"
+            placeholder="Am7 · Gmaj9 · F#dim7 · A Dorian · E Phrygian · G Mixolydian…"
+            autocomplete="off"
+            spellcheck="false"
+          >
+          <button id="searchBtn" class="search-btn" onclick="handleSearch()">
+            <span>Analyze</span>
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
+            </svg>
+          </button>
+        </div>
+
+        <div class="examples-row">
+          <span class="examples-label">Try:</span>
+          <div class="chips">
+            <!-- Chords -->
+            <button class="chip chip-chord" onclick="quickSearch('Am7')">Am7</button>
+            <button class="chip chip-chord" onclick="quickSearch('Gmaj9')">Gmaj9</button>
+            <button class="chip chip-chord" onclick="quickSearch('F#dim7')">F#dim7</button>
+            <button class="chip chip-chord" onclick="quickSearch('Bb13')">Bb13</button>
+            <button class="chip chip-chord" onclick="quickSearch('Csus4')">Csus4</button>
+            <button class="chip chip-chord" onclick="quickSearch('Eaug')">Eaug</button>
+            <!-- Scales/Modes -->
+            <button class="chip chip-scale" onclick="quickSearch('A Dorian')">A Dorian</button>
+            <button class="chip chip-scale" onclick="quickSearch('E Phrygian')">E Phrygian</button>
+            <button class="chip chip-scale" onclick="quickSearch('G Mixolydian')">G Mixolydian</button>
+            <button class="chip chip-scale" onclick="quickSearch('C Major')">C Major</button>
+            <button class="chip chip-scale" onclick="quickSearch('A Minor Pentatonic')">A Minor Pentatonic</button>
+            <button class="chip chip-scale" onclick="quickSearch('F# Harmonic Minor')">F# Harmonic Minor</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Results ── -->
+  <section id="resultsSection" class="results hidden">
+    <div class="results-inner">
+      <div class="results-bar">
+        <div class="query-pill">
+          <span class="query-pill-dot"></span>
+          <span id="queryPill"></span>
+        </div>
+        <button class="new-search-btn" onclick="resetSearch()">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.36"/>
+          </svg>
+          New Search
+        </button>
+      </div>
+
+      <!-- Loading -->
+      <div id="loadingState" class="loading-state hidden">
+        <div class="loading-dots">
+          <span></span><span></span><span></span>
+        </div>
+        <p>Analyzing <strong id="loadingQuery"></strong>&hellip;</p>
+      </div>
+
+      <!-- Error -->
+      <div id="errorState" class="error-state hidden">
+        <div class="error-icon">⚠️</div>
+        <p id="errorMessage">Something went wrong. Please try again.</p>
+      </div>
+
+      <!-- Content -->
+      <div id="resultsContent" class="results-content"></div>
+    </div>
+  </section>
+
+  <!-- ── Welcome / Features ── -->
+  <section id="welcomeSection" class="welcome">
+    <div class="welcome-inner">
+      <div class="features-grid">
+        <div class="feature-card">
+          <div class="feature-icon">🎸</div>
+          <h3>Chord Diagrams</h3>
+          <p>3+ voicings per chord with ASCII diagrams, tab notation, and finger positions for every shape</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">🗺️</div>
+          <h3>Fretboard Maps</h3>
+          <p>Full fretboard diagrams across 3 positions for any scale or mode — from open to upper neck</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">📐</div>
+          <h3>Music Theory</h3>
+          <p>Intervals, formulas, diatonic chords, and progressions in Roman numerals and chord names</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">🎵</div>
+          <h3>Real-World Context</h3>
+          <p>Genre progressions, artist examples, the characteristic sound — everything a player needs</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Footer ── -->
+  <footer class="footer">
+    <p>GuitarX &mdash; Powered by <span>Claude</span> &middot; Your expert guitar reference, always on</p>
+  </footer>
+
+</div>
+
+<script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body>
+</html>
